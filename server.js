@@ -7,10 +7,6 @@ let movies = [
     year: 2023,
     rating: 9.1,
     description: "this is movie1",
-    directror: {
-      id: 991,
-      name: "Bong",
-    },
   },
   {
     id: "2",
@@ -18,10 +14,19 @@ let movies = [
     year: 2011,
     rating: 7.3,
     description: "this is movie2",
-    directror: {
-      id: 992,
-      name: "James",
-    },
+  },
+];
+
+let directors = [
+  {
+    id: 9000001,
+    firstname: "Bong",
+    lastname: "Joonho",
+  },
+  {
+    id: 9000002,
+    firstname: "Park",
+    lastname: "Chanwook",
   },
 ];
 const typeDefs = gql`
@@ -31,14 +36,16 @@ const typeDefs = gql`
     year: Int
     rating: Float
     description: String
-    director: Director
   }
   type Director {
-    id: ID
-    name: String
+    id: ID!
+    firstname: String!
+    lastname: String!
+    fullname: String!
   }
   type Query {
-    movies: [Movie]
+    directors: [Director!]!
+    movies: [Movie!]!
     movie(id: ID!): Movie
   }
   type Mutation {
@@ -55,6 +62,9 @@ const resolvers = {
     movie(_, { id }) {
       return movies.find((movie) => movie.id === id);
     },
+    directors() {
+      return directors;
+    },
   },
   Mutation: {
     postMovie(_, { title }) {
@@ -70,6 +80,11 @@ const resolvers = {
       if (!movie) return false;
       movies = movies.filter((movie) => movie.id !== id);
       return true;
+    },
+  },
+  Director: {
+    fullname({ firstname, lastname }) {
+      return `${firstname} ${lastname}`;
     },
   },
 };
