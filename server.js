@@ -7,6 +7,7 @@ let movies = [
     year: 2023,
     rating: 9.1,
     description: "this is movie1",
+    directorId: "9000002",
   },
   {
     id: "2",
@@ -14,17 +15,26 @@ let movies = [
     year: 2011,
     rating: 7.3,
     description: "this is movie2",
+    directorId: "9000001",
+  },
+  {
+    id: "3",
+    title: "movie1-1",
+    year: 2024,
+    rating: 0,
+    description: "this is movie1-1",
+    directorId: "9000001",
   },
 ];
 
 let directors = [
   {
-    id: 9000001,
+    id: "9000001",
     firstname: "Bong",
     lastname: "Joonho",
   },
   {
-    id: 9000002,
+    id: "9000002",
     firstname: "Park",
     lastname: "Chanwook",
   },
@@ -36,6 +46,7 @@ const typeDefs = gql`
     year: Int
     rating: Float
     description: String
+    director: Director
   }
   type Director {
     id: ID!
@@ -85,6 +96,11 @@ const resolvers = {
   Director: {
     fullname({ firstname, lastname }) {
       return `${firstname} ${lastname}`;
+    },
+  },
+  Movie: {
+    director({ directorId }) {
+      return directors.find((director) => director.id === directorId);
     },
   },
 };
