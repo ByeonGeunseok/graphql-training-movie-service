@@ -1,4 +1,5 @@
 import { ApolloServer, gql } from "apollo-server";
+import fetch from "node-fetch";
 
 let movies = [
   {
@@ -39,10 +40,11 @@ let directors = [
     lastname: "Chanwook",
   },
 ];
+
 const typeDefs = gql`
-"""
-Movie object is ...
-"""
+  """
+  Movie object is ...
+  """
   type Movie {
     """
     Movie Unique ID
@@ -66,10 +68,35 @@ Movie object is ...
     lastname: String!
     fullname: String!
   }
+  type MovieList {
+    id: Int!
+    url: String!
+    imdb_code: String!
+    title: String!
+    title_english: String!
+    title_long: String!
+    slug: String!
+    year: Int!
+    rating: Float!
+    runtime: Float!
+    genres: [String]!
+    summary: String
+    description_full: String!
+    synopsis: String!
+    yt_trailer_code: String!
+    language: String!
+    background_image: String!
+    background_image_original: String!
+    small_cover_image: String!
+    medium_cover_image: String!
+    large_cover_image: String!
+  }
   type Query {
+    movieList: [MovieList!]!
     directors: [Director!]!
     movies: [Movie!]!
     movie(id: ID!): Movie
+    movieDetail(id: String!): MovieList
   }
   type Mutation {
     postMovie(id: ID, title: String!): Movie!
@@ -82,6 +109,18 @@ Movie object is ...
 
 const resolvers = {
   Query: {
+    async movieList() {
+      const r = await fetch("https://yts.mx/api/v2/list_movies.json");
+      const json = await r.json();
+      return json.data.movies;
+    },
+    async movieDetail(_, { id }) {
+      const r = await fetch(
+        `https://yts.mx/api/v2/movie_details.json?movie_id=${id}`
+      );
+      const json = await r.json();
+      return json.data.movie;
+    },
     movies() {
       return movies;
     },
