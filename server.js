@@ -40,14 +40,26 @@ let directors = [
   },
 ];
 const typeDefs = gql`
+"""
+Movie object is ...
+"""
   type Movie {
+    """
+    Movie Unique ID
+    """
     id: ID
+    """
+    Movie Title
+    """
     title: String
     year: Int
     rating: Float
     description: String
     director: Director
   }
+  """
+  Direct object is ...
+  """
   type Director {
     id: ID!
     firstname: String!
@@ -61,6 +73,9 @@ const typeDefs = gql`
   }
   type Mutation {
     postMovie(id: ID, title: String!): Movie!
+    """
+    Deletes a movie if found, else returns false.
+    """
     deleteMovie(id: ID!): Boolean!
   }
 `;
